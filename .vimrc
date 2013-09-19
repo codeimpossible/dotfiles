@@ -181,3 +181,8 @@ if has("gui_running")
     "colorscheme moria
     set guifont=Source_Code_Pro:h9:cANSI
 endif
+
+" Local config
+if filereadable($HOME . "/.vimrc.local")
+    source ~/.vimrc.local
+endif
