@@ -66,6 +66,9 @@ set hls
 set foldmethod=manual
 set nofoldenable
 
+" show extra whitespace
+set list listchars=tab:»·,trail:·
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " CUSTOM AUTOCMDS
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
