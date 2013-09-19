@@ -174,3 +174,10 @@ nnoremap <C-H> <C-W><C-H>
 set splitbelow
 set splitright
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" GO HOME GVIM, YOUR DRUNK
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("gui_running")
+    "colorscheme moria
+    set guifont=Source_Code_Pro:h9:cANSI
+endif
