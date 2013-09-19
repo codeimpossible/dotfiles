@@ -161,3 +161,16 @@ augroup myvimrchooks
 augroup END
 
 autocmd BufWritePre * :%s/\s\+$//e
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" EASIER SPLITS PLS
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+" srsly, who the fuck decided to make splits show up to the left and top...???
+set splitbelow
+set splitright
+
