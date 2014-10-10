@@ -7,6 +7,8 @@ fi
 
 alias ls='ls --color=auto --show-control-char'
 
+alias tmux='TERM=screen-256color-bce tmux'
+
 # http://henrik.nyh.se/2008/12/git-dirty-prompt
 # http://www.simplisticcomplexity.com/2008/03/13/show-your-git-branch-name-in-your-prompt/
 #   username@Machine ~/dev/dir[master]$   # clean working directory
