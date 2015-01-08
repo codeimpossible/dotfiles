@@ -10,13 +10,19 @@ $env:LANG = "en_US.UTF-8"
 # TODO: point this to dropbox dir?
 . '~\Dropbox\bin\tools\posh-git\profile.example.ps1'
 
+# load all the scripts in the powershell dir
+$scripts_path = $PSScriptRoot + "\powershell\"
+Get-ChildItem ( $scripts_path + "*.ps1") | ForEach-Object {. (Join-Path $scripts_path $_.Name) }
+
 # set git\bin into the ENVIRONMENT
 $env:path += ";" + (Get-Item "Env:ProgramFiles(x86)").Value + "\Git\bin"
 
 
 function prompt {
   $p = Split-Path -leaf -path (Get-Location)
-  "$p> "
+  Write-Host $p -nonewline
+  Write-VcsStatus
+  "> "
 }
 
 
