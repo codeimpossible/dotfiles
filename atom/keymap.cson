@@ -25,3 +25,5 @@
 # https://github.com/bevry/cson#what-is-cson
 'atom-workspace':
   'ctrl-alt-n': 'fancy-new-file:toggle'
+  'ctrl-}': 'pane:show-next-item'
+  'ctrl-{': 'pane:show-previous-item'
