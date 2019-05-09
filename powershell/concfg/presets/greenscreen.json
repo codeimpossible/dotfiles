@@ -1,0 +1,20 @@
+{
+    "black":        "#001100",
+    "dark_blue":    "#003300",
+    "dark_green":   "#005500",
+    "dark_cyan":    "#007700",
+    "dark_red":     "#009900",
+    "dark_magenta": "#00bb00",
+    "dark_yellow":  "#00dd00",
+    "gray":         "#00ff00",
+    "dark_gray":    "#007700",
+    "blue":         "#009900",
+    "green":        "#007700",
+    "cyan":         "#00bb00",
+    "red":          "#005500",
+    "magenta":      "#009900",
+    "yellow":       "#00bb00",
+    "white":        "#005500",
+    "screen_colors": "dark_magenta,black",
+    "popup_colors":  "dark_red,dark_blue"
+}
