@@ -86,4 +86,4 @@ Import-Module oh-my-posh
 
 Set-Theme Sorin
 
-cd ~
+Set-Location ~
