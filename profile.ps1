@@ -1,11 +1,11 @@
 $console = $host.UI.RawUI
-$concfg = 'D:\Dropbox\bin\tools\concfg\bin\concfg'
+$concfg = "${PSScriptRoot}/powershell/concfg/bin/concfg"
 
 # RUBY STUFF
 #####################
 
 # import our computed ssl cert for openssl
-$env:SSL_CERT_FILE = resolve-path "D:/dropbox/bin/support/cacert.pem"
+$env:SSL_CERT_FILE = resolve-path "${PSScriptRoot}/ruby/cacert.pem"
 
 # force ruby to parse in utf-8
 $env:LC_ALL = "en_US.UTF-8"
