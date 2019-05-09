@@ -35,7 +35,8 @@ $console.WindowSize = $size
 # POSH-GIT
 #####################
 
-. 'D:\Dropbox\bin\tools\posh-git\profile.example.ps1'
+Import-Module $PSScriptRoot/powershell/posh-git/src/posh-git.psd1
+Add-PoshGitToProfile
 
 # set git\bin into the ENVIRONMENT
 #####################
