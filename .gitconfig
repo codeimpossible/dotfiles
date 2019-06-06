@@ -3,9 +3,10 @@
     # never have this set to true unless you're on windows
     autocrlf=true
 	  editor = vim
+	excludesfile = ~/.gitignore_global
 [user]
-    name = Jared Barboza
-    email = jared.m.barboza@gmail.com
+	name = Jared Barboza
+	email = jared.m.barboza@gmail.com
 [color]
     ui = true
 [color "diff"]
@@ -25,7 +26,7 @@
     untracked = cyan
 [alias]
     cd = !"git-cd"
-
+    rt = !renameTag
     st = status
     ci = commit
     br = branch
@@ -66,3 +67,8 @@
 
 # Show files ignored by git:
     ign = ls-files -o -i --exclude-standard
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

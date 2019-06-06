@@ -77,9 +77,15 @@ function grepServices ( [string] $svcName ) {
   Get-Service | Where-Object { $_.name.contains($svcName) }
 }
 
+function clean() {
+    Get-ChildItem .\ -include bin,obj -Recurse | foreach ($_) { remove-item $_.fullname -Force -Recurse }
+}
+
 Set-Alias find-service grepServices
 Set-Alias i invoke-history
 Set-Alias gh grepHistory
+Set-Alias net-clean clean
+
 
 # Posh Theme Chooser
 Import-Module oh-my-posh
