@@ -1,8 +1,8 @@
 [core]
     whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
     # never have this set to true unless you're on windows
-    autocrlf=true
-	  editor = vim
+    autocrlf = false
+    editor = vim
 [user]
     name = Jared Barboza
     email = jared.m.barboza@gmail.com
@@ -25,7 +25,9 @@
     untracked = cyan
 [alias]
     cd = !"git-cd"
-
+    up = pull
+    f  = fetch
+    rs = reset --hard HEAD
     st = status
     ci = commit
     br = branch
@@ -66,3 +68,10 @@
 
 # Show files ignored by git:
     ign = ls-files -o -i --exclude-standard
+[push]
+	default = current
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f

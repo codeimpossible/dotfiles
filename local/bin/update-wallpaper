@@ -1,0 +1,81 @@
+#!/bin/bash
+#
+# Uses the Sunrise/Sunset API (http://api.sunrise-sunset.org/) to set the OS X
+# computer's desktop picture based on local daylight. The potential time periods
+# are night, sunrise, day, and sunset. Sunrise is defined as the time between
+# when astronomical twilight begins and the sun is above the horizon. Sunset is
+# defined as when the sun begins dipping below the horizon and the end of
+# astronomical twilight.
+#
+# This program depends on the `whereami` and `jq` utilities. If these are not
+# installed, then `homebrew` will detect this and ask if you'd like to install
+# them.
+#
+# This program assumes that pictures will be available for use in:
+#
+#   ~/Library/Desktop Pictures/Sunrise/
+#   ~/Library/Desktop Pictures/Day/
+#   ~/Library/Desktop Pictures/Sunset/
+#   ~/Library/Desktop Pictures/Night/
+#
+# A picture will be chosen at random from the appropriate folder. This script
+# is meant to be run as a Mac OS LaunchAgent, and an example .plist can be found
+# in this repo at local/share/LaunchAgents/com.codeimpossible.update-wallpaper.plist
+#
+# To have this script run automatically throughout the day, copy that file into
+# ~/Library/LaunchAgents and edit values as necessary to be usable by your own
+# user. Then, run:
+#
+#   launchctl load ~/Library/LaunchAgents/com.codeimpossible.update-wallpaper.plist
+
+abort() { echo "!!! $*" >&2; exit 1; }
+log()   { echo "--> $*"; }
+logn()  { printf -- "--> $* "; }
+logk()  { echo "OK"; }
+
+logk
+
+# Parse results using jq
+SUNRISE_START="2016-02-14T12:48:02+00:00"
+SUNRISE_END="2016-02-14T13:12:34+00:00"
+SUNSET_START="2016-02-15T00:18:55+00:00"
+SUNSET_END="2016-02-15T00:43:26+00:00"
+
+log "Sunrise starts at $SUNRISE_START and ends at $SUNRISE_END"
+log "Sunrset starts at $SUNSET_START and ends at $SUNSET_END"
+
+# Convert all ISO 8601 timestamps to UNIX timestamps for easy number comparison
+SUNRISE_START=$(date -ujf "%Y-%m-%dT%H:%M:%S+00:00" $SUNRISE_START "+%s")
+SUNRISE_END=$(date -ujf "%Y-%m-%dT%H:%M:%S+00:00" $SUNRISE_END "+%s")
+SUNSET_START=$(date -ujf "%Y-%m-%dT%H:%M:%S+00:00" $SUNSET_START "+%s")
+SUNSET_END=$(date -ujf "%Y-%m-%dT%H:%M:%S+00:00" $SUNSET_END "+%s")
+
+NOW=$(date -u +%s)
+PERIOD=""
+
+# Determine the current daylight period based on the current time
+(( $NOW < $SUNRISE_START || $NOW > $SUNSET_END))   && PERIOD="Night"
+(( $NOW > $SUNRISE_START && $NOW < $SUNRISE_END))  && PERIOD="Sunrise"
+(( $NOW > $SUNRISE_END   && $NOW < $SUNSET_START)) && PERIOD="Day"
+(( $NOW > $SUNSET_START  && $NOW < $SUNSET_END))   && PERIOD="Sunset"
+
+log "Right now, it's $(date -u +%Y-%m-%dT%H:%M:%S+00:00). That means you're in $PERIOD."
+
+# Use AppleScript to change the desktop picture
+logn "Changing the desktop picture:"
+osascript <<EOF
+on getImage()
+  tell application "Finder"
+    return some file of folder ("Library:Desktop Pictures:$PERIOD") of home as text
+  end tell
+end getImage
+
+tell application "Finder"
+  try
+    set desktop picture to my getImage()
+  end try
+end tell
+EOF
+logk
+
+exit 0

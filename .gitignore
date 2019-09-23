@@ -1,1 +1,6 @@
 **/.netrwhist
+.DS_*
+.vim/bundle/*
+**/node_modules/
+
+zsh/.oh-my-zsh/

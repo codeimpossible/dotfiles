@@ -1,18 +1,27 @@
 # Path to your oh-my-zsh installation.
-export ZSH=$HOME/.oh-my-zsh
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+export ZSH="$DIR/.oh-my-zsh"
+
+
+display_center(){
+    columns="$(tput cols)"
+    while IFS= read -r line; do
+        printf "%*s\n" $(( (${#line} + columns) / 2)) "$line"
+    done < "$1"
+}
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="jared"
-
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
+export ZSH_THEME="robbyrussell"
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
+
+# Uncomment the following line to use hyphen-insensitive completion. Case
+# sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
 
 # Uncomment the following line to disable bi-weekly auto-update checks.
 # DISABLE_AUTO_UPDATE="true"
@@ -26,8 +35,8 @@ ZSH_THEME="jared"
 # Uncomment the following line to disable auto-setting terminal title.
 # DISABLE_AUTO_TITLE="true"
 
-# Uncomment the following line to disable command auto-correction.
-# DISABLE_CORRECTION="true"
+# Uncomment the following line to enable command auto-correction.
+# ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
 # COMPLETION_WAITING_DOTS="true"
@@ -48,14 +57,14 @@ ZSH_THEME="jared"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git jira)
-
-source $ZSH/oh-my-zsh.sh
+# Add wisely, as too many plugins slow down shell startup.
+plugins=(git osx rbenv docker node docker-compose osx tmux vscode nvm npm yarn)
 
 # User configuration
 
-export PATH="/Users/jbarboza/.rvm/gems/ruby-2.1.1/bin:/Users/jbarboza/.rvm/gems/ruby-2.1.1@global/bin:/Users/jbarboza/.rvm/rubies/ruby-2.1.1/bin:/usr/local/bin:/usr/local/heroku/bin:/opt/local/bin:/opt/local/sbin:/Users/jbarboza/bin:/Applications/Postgres93.app/Contents/MacOS/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/git/bin:/Users/jbarboza/Downloads/adt-bundle-mac-x86_64-20131030/platform-tools/:/Users/jbarboza/Downloads/adt-bundle-mac-x86_64-20131030/tools:/Users/jbarboza/.rvm/bin:/Users/jbarboza/.rvm/bin"
+export PATH=$HOME/.local/bin:$HOME/bin:/usr/local/bin:$PATH
 # export MANPATH="/usr/local/man:$MANPATH"
+
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -72,3 +81,38 @@ export PATH="/Users/jbarboza/.rvm/gems/ruby-2.1.1/bin:/Users/jbarboza/.rvm/gems/
 
 # ssh
 # export SSH_KEY_PATH="~/.ssh/dsa_id"
+
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+#
+# Example aliases
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
+
+source $ZSH/oh-my-zsh.sh
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+
+alias rake='noglob rake'
+
+export PATH="$HOME/.yarn/bin:$PATH"
+
+export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
+
+d=$(nvm which 8.11.3)
+e=$(dirname $d)
+SLS_NODE_ROOT="${e}/lib"
+
+# echo "Serverless will use $SLS_NODE_ROOT"
+# tabtab source for serverless package
+# uninstall by removing these lines or running `tabtab uninstall serverless`
+[[ -f $SLS_NODE_ROOT/node_modules/serverless/node_modules/tabtab/.completions/serverless.zsh ]] && . $SLS_NODE_ROOT/node_modules/serverless/node_modules/tabtab/.completions/serverless.zsh
+# tabtab source for sls package
+# uninstall by removing these lines or running `tabtab uninstall sls`
+[[ -f $SLS_NODE_ROOT/node_modules/serverless/node_modules/tabtab/.completions/sls.zsh ]] && . $SLS_NODE_ROOT/node_modules/serverless/node_modules/tabtab/.completions/sls.zsh
+# tabtab source for slss package
+# uninstall by removing these lines or running `tabtab uninstall slss`
+[[ -f $SLS_NODE_ROOT/node_modules/serverless/node_modules/tabtab/.completions/slss.zsh ]] && . $SLS_NODE_ROOT/node_modules/serverless/node_modules/tabtab/.completions/slss.zsh
