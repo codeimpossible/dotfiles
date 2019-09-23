@@ -1,22 +1,50 @@
+$console = $host.UI.RawUI
+$concfg = "${PSScriptRoot}/powershell/concfg/bin/concfg"
+
+# RUBY STUFF
+#####################
+
 # import our computed ssl cert for openssl
-$env:SSL_CERT_FILE = resolve-path "~/dropbox/bin/support/cacert.pem"
+$env:SSL_CERT_FILE = resolve-path "${PSScriptRoot}/ruby/cacert.pem"
 
 # force ruby to parse in utf-8
 $env:LC_ALL = "en_US.UTF-8"
 $env:LANG = "en_US.UTF-8"
 
+# COLORS
+#####################
 
-# Load posh-git example profile
-# TODO: point this to dropbox dir?
-. '~\Dropbox\bin\tools\posh-git\profile.example.ps1'
+function Set-Theme([string]$theme) {
+  . "$concfg" import "$theme"
+}
 
-# load all the scripts in the powershell dir
-$scripts_path = $PSScriptRoot + "\powershell\"
-Get-ChildItem ( $scripts_path + "*.ps1") | ForEach-Object {. (Join-Path $scripts_path $_.Name) }
+# WINDOW/BUFFER SIZE
+#####################
+
+$buffer = $console.BufferSize
+$buffer.Width = 250
+$buffer.Height = 3000
+$console.BufferSize = $buffer
+
+$size = $console.WindowSize
+$size.Width = 250
+$size.Height = 60
+$console.WindowSize = $size
+
+
+# POSH-GIT
+#####################
+
+Import-Module $PSScriptRoot/powershell/posh-git/src/posh-git.psd1
+Add-PoshGitToProfile
 
 # set git\bin into the ENVIRONMENT
+#####################
+
 $env:path += ";" + (Get-Item "Env:ProgramFiles(x86)").Value + "\Git\bin"
 
+# CUSTOM PROMPT
+#####################
 
 function prompt {
   $p = Split-Path -leaf -path (Get-Location)
@@ -25,16 +53,20 @@ function prompt {
   "> "
 }
 
-
 # ALIASES
 #####################
 
-# just a quick shortcut to my src directory
-function toSrc{Set-Location ~\src}
+function Rename-GitTag([string] $old, [string] $new) {
+    git tag $new $old
+    git tag -d $old
+    git push origin :refs/tags/$old
+    git push --tags
+}
 
-# openFirstSolution will open the first .sln file it encounters in the current directory tree
-# thanks to Sebastien Lambla -> http://codebetter.com/sebastienlambla/2011/03/15/opening-a-solution-from-the-command-line-in-powershell/
-function openFirstSolution{ ls -in *.sln -r | select -first 1 | %{ ii $_.FullName } }
+function took() {
+  $command = Get-History -Count 1
+  $command.EndExecutionTime - $command.StartExecutionTime
+}
 
 # function to grep history
 function grepHistory ([string] $word) {
@@ -45,12 +77,19 @@ function grepServices ( [string] $svcName ) {
   Get-Service | Where-Object { $_.name.contains($svcName) }
 }
 
+function clean() {
+    Get-ChildItem .\ -include bin,obj -Recurse | foreach ($_) { remove-item $_.fullname -Force -Recurse }
+}
+
 Set-Alias find-service grepServices
-Set-Alias src toSrc
-Set-Alias vsopen openFirstSolution
 Set-Alias i invoke-history
 Set-Alias gh grepHistory
-Set-Alias vs "C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe"
-Set-Alias subl "~\Dropbox\bin\apps\sublime3\sublime_text.exe"
+Set-Alias net-clean clean
 
-cd ~
+
+# Posh Theme Chooser
+Import-Module oh-my-posh
+
+Set-Theme Sorin
+
+Set-Location ~

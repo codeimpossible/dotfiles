@@ -69,3 +69,8 @@ json() {
 
 # Don't record some commands
 export HISTIGNORE="&:[ ]*:exit:ls:bg:fg:history:clear"
+export PS1='\u@\h \[\033[1;33m\]\w\[\033[0m\]$(parse_git_branch)\n$ '
+
+export function net-clean() {
+    find . -iname "bin" -o -iname "obj" -print0 | xargs -0 rm -rf
+}
