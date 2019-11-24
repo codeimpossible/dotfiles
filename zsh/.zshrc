@@ -1,20 +1,23 @@
-# Path to your oh-my-zsh installation.
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-export ZSH="$DIR/.oh-my-zsh"
 
+#set -x
+lastDir=$(pwd)
+currentFilePath="$(readlink ~/.zshrc)"
+zshHomeDir="$(dirname $currentFilePath)"
+dotFilesHome="$(cd $zshHomeDir && cd .. && pwd)"
 
-display_center(){
-    columns="$(tput cols)"
-    while IFS= read -r line; do
-        printf "%*s\n" $(( (${#line} + columns) / 2)) "$line"
-    done < "$1"
-}
+DIR="$dotFilesHome"
+ZSH="$zshHomeDir/.oh-my-zsh"
+pushd $DIR > /dev/null 2>&1
+source .localrc
+popd > /dev/null 2>&1
 
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
-export ZSH_THEME="robbyrussell"
+if [[ ! -d $ZSH ]]; then
+    git clone https://github.com/robbyrussell/oh-my-zsh.git $ZSH > /dev/null 2>&1
+fi
+
+if [[ ! -f $ZSH/themes/jared.zsh-theme ]] || [[ $DIR/zsh/jared.zsh-theme -nt $ZSH/themes/jared.zsh-theme ]]; then
+    cp $DIR/zsh/jared.zsh-theme $ZSH/themes/jared.zsh-theme
+fi
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -31,7 +34,6 @@ export ZSH_THEME="robbyrussell"
 
 # Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
-
 # Uncomment the following line to disable auto-setting terminal title.
 # DISABLE_AUTO_TITLE="true"
 
@@ -39,12 +41,12 @@ export ZSH_THEME="robbyrussell"
 # ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
-# COMPLETION_WAITING_DOTS="true"
+COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
 # much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
+DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Uncomment the following line if you want to change the command execution time
 # stamp shown in the history command output.
@@ -62,12 +64,9 @@ plugins=(git osx rbenv docker node docker-compose osx tmux vscode nvm npm yarn)
 
 # User configuration
 
-export PATH=$HOME/.local/bin:$HOME/bin:/usr/local/bin:$PATH
 # export MANPATH="/usr/local/man:$MANPATH"
 
 
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then
@@ -91,17 +90,49 @@ export PATH=$HOME/.local/bin:$HOME/bin:/usr/local/bin:$PATH
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-source $ZSH/oh-my-zsh.sh
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-
+########################################
+# Aliases
+########################################
 alias rake='noglob rake'
 
+#######################################
+# Exports
+#######################################
+
+# Set name of the theme to load.
+# Look in ~/.oh-my-zsh/themes/
+# Optionally, if you set this to "random", it'll load a random theme each
+# time that oh-my-zsh is loaded.
+export ZSH_THEME="jared"
+#export ZSH_THEME="robbyrussell"
 export PATH="$HOME/.yarn/bin:$PATH"
 
+# You may need to manually set your language environment
+export LANG=en_US.UTF-8
 export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
 
+export DOTFILES_HOME="$DIR"
+
+########################################
+# Load ZSH
+########################################
+source $ZSH/oh-my-zsh.sh
+
+
+########################################
+# Load Custom Auto Completion
+########################################
+
+# Load Git completion
+zstyle ':completion:*:*:git:*' script $DIR/zsh/git-completion.bash
+fpath=($DIR/zsh $fpath)
+
+autoload -Uz compinit && compinit
+
+########################################
+# Serverless Options
+########################################
 d=$(nvm which 8.11.3)
 e=$(dirname $d)
 SLS_NODE_ROOT="${e}/lib"
@@ -116,3 +147,5 @@ SLS_NODE_ROOT="${e}/lib"
 # tabtab source for slss package
 # uninstall by removing these lines or running `tabtab uninstall slss`
 [[ -f $SLS_NODE_ROOT/node_modules/serverless/node_modules/tabtab/.completions/slss.zsh ]] && . $SLS_NODE_ROOT/node_modules/serverless/node_modules/tabtab/.completions/slss.zsh
+
+

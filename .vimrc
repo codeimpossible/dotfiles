@@ -2,6 +2,7 @@
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
+let mapleader = " "
 "let g:OmniSharp_selector_ui = 'fzf'    " Use fzf.vim
 "let g:OmniSharp_start_server = 0
 let g:OmniSharp_port = 2000

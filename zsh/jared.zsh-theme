@@ -25,68 +25,60 @@
 ### Segment drawing
 # A few utility functions to make it easy and re-usable to draw segmented prompts
 
-CURRENT_BG='NONE'
-SEGMENT_SEPARATOR='⮀'
+# local time, color coded by last return code
+time_enabled="%(?.%{$fg[green]%}.%{$fg[red]%})%*%{$reset_color%}"
+time_disabled="%{$fg[green]%}%*%{$reset_color%}"
+time=$time_enabled
 
-ONLINE='%{%F{green}%}◉'
-OFFLINE='%{%F{red}%}⦿'
+ZSH_THEME_GIT_PROMPT_PREFIX=" ☁  %{$fg[red]%}"
+ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[red]%} Ⓓ %{$reset_color%}" # Ⓓ
+ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg[cyan]%} ✭" # ⓣ
+ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[green]%} ☀" # Ⓞ
 
-# Begin a segment
-# Takes two arguments, background and foreground. Both can be omitted,
-# rendering default background/foreground.
-prompt_segment() {
-  local bg fg
-  [[ -n $1 ]] && bg="%K{$1}" || bg="%k"
-  [[ -n $2 ]] && fg="%F{$2}" || fg="%f"
-  if [[ $CURRENT_BG != 'NONE' && $1 != $CURRENT_BG ]]; then
-    echo -n " %{$bg%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR%{$fg%} "
-  else
-    echo -n "%{$bg%}%{$fg%} "
-  fi
-  CURRENT_BG=$1
-  [[ -n $3 ]] && echo -n $3
-}
+ZSH_THEME_GIT_PROMPT_ADDED="%{$fg[cyan]%} ✚" # ⓐ ⑃
+ZSH_THEME_GIT_PROMPT_MODIFIED="%{$fg[yellow]%} ⚡"  # ⓜ ⑁
+ZSH_THEME_GIT_PROMPT_DELETED="%{$fg[red]%} ✖" # ⓧ ⑂
+ZSH_THEME_GIT_PROMPT_RENAMED="%{$fg[blue]%} ➜" # ⓡ ⑄
+ZSH_THEME_GIT_PROMPT_UNMERGED="%{$fg[magenta]%} ♒" # ⓤ ⑊
+ZSH_THEME_GIT_PROMPT_AHEAD="%{$fg[blue]%} 𝝙"
 
-# End the prompt, closing any open segments
-prompt_end() {
-  if [[ -n $CURRENT_BG ]]; then
-    echo -n " %{%k%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR"
-  else
-    echo -n "%{%k%}"
-  fi
-  echo -n "%{%f%}"
-  CURRENT_BG=''
-}
+ZSH_THEME_RUBY_PROMPT_PREFIX="%{$fg[yellow]%}"
+ZSH_THEME_RUBY_PROMPT_SUFFIX="%{$reset_color%}"
+
+# More symbols to choose from:
+# ☀ ✹ ☄ ♆ ♀ ♁ ♐ ♇ ♈ ♉ ♚ ♛ ♜ ♝ ♞ ♟ ♠ ♣ ⚢ ⚲ ⚳ ⚴ ⚥ ⚤ ⚦ ⚒ ⚑ ⚐ ♺ ♻ ♼ ☰ ☱ ☲ ☳ ☴ ☵ ☶ ☷
+# ✡ ✔ ✖ ✚ ✱ ✤ ✦ ❤ ➜ ➟ ➼ ✂ ✎ ✐ ⨀ ⨁ ⨂ ⨍ ⨎ ⨏ ⨷ ⩚ ⩛ ⩡ ⩱ ⩲ ⩵  ⩶ ⨠
+# ⬅ ⬆ ⬇ ⬈ ⬉ ⬊ ⬋ ⬒ ⬓ ⬔ ⬕ ⬖ ⬗ ⬘ ⬙ ⬟  ⬤ 〒 ǀ ǁ ǂ ĭ Ť Ŧ
+
+
 
 ### Prompt components
 # Each component will draw itself, and hide itself if no information needs to be shown
 
 # Context: user@hostname (who am I and where am I)
-prompt_context() {
-  local user=`whoami`
-
-  if [[ "$user" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-    prompt_segment black default "%(!.%{%F{yellow}%}.)$user%m"
-  fi
+prompt_user() {
+  echo "%{$fg[blue]%}⚥ %{%F{yellow}%}//kat❤ %m "
 }
 
 # Git: branch/detached head, dirty status
 prompt_git() {
   local ref dirty
   if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
-    ZSH_THEME_GIT_PROMPT_DIRTY='±'
+    #ZSH_THEME_GIT_PROMPT_DIRTY='±'
     dirty=$(parse_git_dirty)
     ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git show-ref --head -s --abbrev |head -n1 2> /dev/null)"
-    if [[ -n $dirty ]]; then
-      prompt_segment yellow black
-    else
-      prompt_segment green black
-    fi
-    echo -n "${ref/refs\/heads\//⭠ }$dirty"
+    echo -n " ${ref/refs\/heads\//±}$dirty "
   fi
 }
 
+function prompt_char {
+    echo "%{$fg[green]%} //λ"
+}
+
 function prompt_online() {
+  ONLINE='%{%F{green}%}◉'
+  OFFLINE='%{%F{red}%}⦿'
   if [[ -f ~/.offline ]]; then
     echo $OFFLINE
   else
@@ -94,39 +86,36 @@ function prompt_online() {
   fi
 }
 
-# Dir: current working directory
-prompt_dir() {
-  prompt_segment blue black '%~'
-}
-
-# Status:
-# - was there an error
-# - am I root
-# - are there background jobs?
-prompt_status() {
-  local symbols
-  symbols=()
-  [[ $RETVAL -ne 0 ]] && symbols+="%{%F{red}%}✘"
-  [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}⚡"
-  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}⚙"
-
-  [[ -n "$symbols" ]] && prompt_segment black default "$symbols"
+prompt_root() {
+  IS_ROOT="‼"
+  IS_NOT_ROOT="ᴥ"
+  local user=`whoami`
+  if [[ "root" = "$user" ]]; then
+    echo "$IS_ROOT"
+  else
+    echo "$IS_NOT_ROOT"
+  fi
 }
 
 function battery_charge {
-  echo `~/src/dotfiles/zsh/batcharge.py`
+  echo `$DOTFILES_HOME/zsh/batcharge.py`
 }
 
-## Main prompt
-build_prompt() {
-  RETVAL=$?
-  prompt_status
-  prompt_git
-  prompt_dir
-  prompt_end
+prompt_screen() {
+  local total=$(echo "$(screen -ls | grep -c -i detach) + $(tmux ls 2>/dev/null | grep -c -i -v attach)" | bc)
+  local tmuxCount=$(tmux ls 2>/dev/null | grep -c -i -v attach)
+  local screenCount=$(screen -ls | grep -c -i detach)
+  echo "⎚ ${total}⋮${tmuxCount}⋮${screenCount}"
 }
 
-RPROMPT='$(prompt_online) $(battery_charge)'
+# # The prompt
 
-PROMPT='%{%f%b%k%}$(build_prompt)
-» '
+NEWLINE=$'\n'
+PROMPT='$(prompt_user)%{$reset_color%}$(prompt_screen) %{$fg[magenta]%}[%c]$(prompt_git)$(prompt_char) %{$reset_color%} '
+#PROMPT='$(prompt_online) $(prompt_user) ${time} %{$fg[magenta]%}$(git_prompt_info)%{$reset_color%}$(git_prompt_status)%{$reset_color%}$(git_prompt_ahead)%{$reset_color%}
+#$(battery_charge) $(prompt_screen) $(prompt_root) %{$fg[magenta]%}[%c] $(prompt_char) %{$reset_color%} '
+
+# The right-hand prompt
+
+# RPROMPT='$(prompt_online) ${time} %{$fg[magenta]%}$(git_prompt_info)%{$reset_color%}$(git_prompt_status)%{$reset_color%}$(git_prompt_ahead)%{$reset_color%}'
+
