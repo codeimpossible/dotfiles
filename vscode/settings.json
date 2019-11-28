@@ -1,0 +1,56 @@
+// Place your settings in this file to overwrite the default settings
+{
+    "newFile.relativeTo": "file",
+    "newFile.showPathRelativeTo": "project",
+    "newFile.defaultFileExtension": ".cs",
+    "editor.fontLigatures": true,
+    "editor.fontFamily": "'Fira Code iScript', 'FiraCode-Retina', Menlo, Monaco, 'Courier New', monospace",
+    "window.zoomLevel": 0,
+    "terminal.integrated.shell.osx": "/bin/zsh",
+    "files.exclude": {
+        "*.meta": true,
+        "**/.DS_Store": true,
+        "**/.git": true,
+        "**/.hg": true,
+        "**/.history/": true,
+        "**/.svn": true,
+        "**/**/*.meta": true
+    },
+    "workbench.colorTheme": "Material Theme Palenight",
+    "extensions.ignoreRecommendations": false,
+    "gitlens.advanced.messages": {
+        "suppressShowKeyBindingsNotice": true
+    },
+    "csharp.format.enable": false,
+    "explorer.confirmDragAndDrop": false,
+    "editor.emptySelectionClipboard": false,
+    "explorer.confirmDelete": false,
+    "vsnotes.defaultNotePath": "/Users/jaredbarboza/Documents/VsNotes",
+    "gitlens.views.fileHistory.enabled": true,
+    "gitlens.views.lineHistory.enabled": true,
+    "todohighlight.include": [
+        "**/*.js",
+        "**/*.jsx",
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.html",
+        "**/*.php",
+        "**/*.css",
+        "**/*.scss",
+        "**/*.cs",
+        "**/*.sh",
+        "**/*.ps1"
+    ],
+    "csharp.suppressDotnetRestoreNotification": true,
+    "workbench.fontAliasing": "auto",
+    "omnisharp.enableEditorConfigSupport": true,
+    "omnisharp.enableRoslynAnalyzers": false,
+    "omnisharp.monoPath": "/usr/local/bin/mono",
+    "azure.resourceFilter": [
+        "acbb5baf-3f46-46f6-899c-0c21c82944b2/31b54102-6b7f-41a1-8ef2-4eb8d04c6e21"
+    ],
+    "csharp.suppressProjectJsonWarning": true,
+    "editor.fontSize": 14,
+    "aws.telemetry": false,
+    "todo-tree.highlights.enabled": true
+}
